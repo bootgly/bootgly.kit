@@ -19,7 +19,7 @@ The installer checks your environment (git + PHP 8.4+), clones this kit, initial
 Start your project right after:
 
 ```bash
-cd myapp
+cd bootgly.kit
 bootgly project list
 bootgly project <Name> start
 ```
@@ -52,8 +52,8 @@ php bootgly project import https://github.com/foo/project1 Project1
 ## 🎼 Composer (alternative)
 
 ```bash
-composer create-project bootgly/bootgly.kit myapp --stability=dev
-cd myapp
+composer create-project bootgly/bootgly.kit --stability=dev
+cd bootgly.kit
 php bootgly project create
 ```
 
