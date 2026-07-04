@@ -6,7 +6,7 @@
   <i>The official Bootgly starter template</i>
 </p>
 
-One kit for both platforms: create **Console** (CLI / TUI) or **Web** (HTTP / WebSocket) projects from a single template — the project wizard sets everything up for you.
+One kit for both platforms: create **Console** (CLI / TUI) or **Web** projects from a single template — the project wizard sets everything up for you.
 
 ## ⚡ Get started (one command)
 
