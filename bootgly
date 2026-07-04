@@ -1,0 +1,49 @@
+#!/usr/bin/env php
+<?php
+/*
+ * --------------------------------------------------------------------------
+ * Bootgly PHP Framework
+ * Developed by Rodrigo Vieira (@rodrigoslayertech)
+ * Copyright 2023-present
+ * Licensed under MIT
+ * --------------------------------------------------------------------------
+ */
+
+define('BOOTGLY_WORKING_BASE', __DIR__);
+define('BOOTGLY_WORKING_DIR', BOOTGLY_WORKING_BASE . DIRECTORY_SEPARATOR);
+
+// @ Autoload Composer (if exists) or autoboot the Bootgly platform (git submodule):
+$booted =
+   (@include __DIR__ . '/@imports/autoload.php') ||
+   (@include __DIR__ . '/Bootgly/autoboot.php');
+
+// @ Autoboot the optional platforms (installed on demand by the project wizard):
+if ($booted !== false) {
+   foreach (['Console', 'Web'] as $platform) {
+      if (is_file(__DIR__ . "/{$platform}/autoboot.php") === true) {
+         @include __DIR__ . "/{$platform}/autoboot.php";
+      }
+   }
+}
+
+if ($booted === false) {
+   exit(<<<STATUS
+
+   To get everything with one command, use the Bootgly installer:
+   ------------------------------------------\033[1;36m
+   curl -fsSL https://bootgly.com/install | bash
+   \033[0m------------------------------------------\033[5m
+   Or...\033[0m
+   initialize the Bootgly platform submodule manually:
+   ---------------------------------------\033[1;36m
+   git submodule update --init Bootgly
+   \033[0m---------------------------------------
+
+   Then create your first project with the wizard:
+   ---------------------------------------\033[1;36m
+   php bootgly project create
+   \033[0m---------------------------------------
+
+
+   STATUS);
+}

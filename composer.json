@@ -1,0 +1,44 @@
+{
+   "name": "bootgly/bootgly.kit",
+   "version": "0.1.0-alpha",
+   "type": "project",
+   "description": "The Bootgly Kit — the official Bootgly starter template.",
+   "license": "MIT",
+   "keywords": [
+      "bootgly",
+      "php",
+      "framework",
+
+      "cli",
+      "console",
+      "web",
+
+      "kit",
+      "template",
+      "starter"
+   ],
+   "authors": [
+      {
+         "name": "Rodrigo Vieira",
+         "email": "rodrigo@bootgly.com",
+         "homepage": "https://www.bootgly.com/"
+      }
+   ],
+
+   "config": {
+      "vendor-dir": "./@imports/"
+   },
+
+   "require": {
+      "bootgly/bootgly": "dev-main",
+      "bootgly/bootgly-console": "dev-main",
+      "bootgly/bootgly-web": "dev-main"
+   },
+   "minimum-stability": "dev",
+
+   "scripts": {
+      "post-create-project-cmd": [
+         "@php -r \"echo PHP_EOL . 'Bootgly Kit ready!' . PHP_EOL . PHP_EOL . 'Create your first project with the wizard:' . PHP_EOL . '  php bootgly project create' . PHP_EOL . PHP_EOL;\""
+      ]
+   }
+}
