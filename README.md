@@ -14,7 +14,7 @@ One kit for both platforms: create **Console** (CLI / TUI) or **Web** projects f
 curl -fsSL https://bootgly.com/install | bash
 ```
 
-The installer checks your environment (git + PHP 8.4+), clones this kit, initializes the Bootgly platform and opens the **project wizard** — where you pick your platform (Console or Web), boot the resource folders and create your first project **from scratch** or by **importing** a platform project (like the Demos).
+The installer checks your environment (git + PHP 8.4+), clones this kit, initializes the Bootgly platform and opens the **project wizard** — where you pick your extra platforms (Console and/or Web), boot the resource folders and create your first project **from scratch** or by **importing** a platform project (like the Demos) or a Git remote.
 
 Start your project right after:
 
