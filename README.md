@@ -24,37 +24,12 @@ bootgly project list
 bootgly project <Name> start
 ```
 
-## 📦 Manual setup (git submodules)
-
-Prefer to do it by hand? Use this repository as a GitHub template (or clone it), then:
-
-```bash
-git submodule update --init Bootgly   # the Bootgly platform (required)
-php bootgly project create            # the wizard initializes the rest
-```
-
-The wizard initializes the optional platform submodules (`Console/`, `Web/`) and runs `bootgly boot` to install the resource folders (`projects/`, `public/`, `scripts/`, `storage/`, `tests/`).
-
-Non-interactive (CI / scripts):
-
-```bash
-php bootgly project create App/Web --platform=web --interfaces=WPI --yes
-```
-
 ## 🧩 Importing projects
 
 Any directory with a `*.project.php` file at its root is a Bootgly project. Import one from a git repository:
 
 ```bash
 php bootgly project import https://github.com/foo/project1 Project1
-```
-
-## 🎼 Composer (alternative)
-
-```bash
-composer create-project bootgly/bootgly.kit --stability=dev
-cd bootgly.kit
-php bootgly project create
 ```
 
 ## 🗂 Structure
