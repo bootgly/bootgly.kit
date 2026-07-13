@@ -18,7 +18,7 @@ composer.lock
 # Boot
 @/*
 @imports
-!@/autoload.php
+!@/autoboot.php
 
 !@/__php__/
 !@/__docker__/
