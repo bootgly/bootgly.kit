@@ -24,9 +24,21 @@ bootgly project list
 bootgly project <Name> start
 ```
 
+## 🗄 Database projects
+
+Projects that ship database resources — like the Web platform demos (Blog, Tasks, Auth) — prepare their database before the first start:
+
+```bash
+bootgly project <Name> migrate up   # create the database schema
+bootgly project <Name> seed run     # seed the database
+bootgly project <Name> start
+```
+
+The CLI advises these exact steps right after a project with database resources is created or imported.
+
 ## 🧩 Importing projects
 
-Any directory with a `*.project.php` file at its root is a Bootgly project. Import one from a git repository:
+Run `bootgly project import` with no arguments to choose the source interactively — the Platforms (Demos, games and Web scaffolds) or a Git remote. Any directory with a `*.project.php` file at its root is a Bootgly project; import one directly from a git repository:
 
 ```bash
 php bootgly project import https://github.com/foo/project1 Project1
@@ -40,6 +52,7 @@ bootgly.kit/
 ├── Console/     ← Console platform extras (optional submodule)
 ├── Web/         ← Web platform extras (optional submodule)
 ├── projects/    ← your projects (installed by `bootgly boot`)
+├── tests/       ← your test suites (`bootgly test`)
 ├── bootgly      ← the Bootgly CLI launcher
 └── index.php    ← the Web front controller
 ```
