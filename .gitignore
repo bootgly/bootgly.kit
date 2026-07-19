@@ -33,7 +33,11 @@ _*.test.php
 #-- /Bootgly --#
 # ...
 
-#-- Workables --#
+#-- resource dirs --#
+
+#- /docs
+# Ignore user docs (project specs, notes)
+/docs/
 
 #- /projects
 # ...
@@ -49,5 +53,12 @@ _*.test.php
 /storage/@*/
 # Ignore known folders
 /storage/cache/*
+/storage/pids/*
 /storage/logs/*
+/storage/queues/*
+/storage/schedule/*
+/storage/security/*
 /storage/temp/*
+/storage/tests/*
+/storage/tests/snapshots/*
+/storage/sessions/*
