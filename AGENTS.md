@@ -34,6 +34,11 @@ system package manager (often via sudo) ONLY when a dependency is missing; on
 a user's machine, confirm with them before letting it do that (prefer
 `--no-wizard`, which fails fast naming what is missing).
 
+When the default `php` is older than 8.4 but a versioned binary exists
+(`php8.4` on Debian/sury, `php84` on RHEL/Remi and Alpine), the installer
+detects and uses it, and prints the next steps with that prefix — substitute
+it for `php` in every command in this guide.
+
 Environment overrides:
 
 - `BOOTGLY_KIT_REPO=<url|path>` — clone the kit from another remote.
