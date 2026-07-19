@@ -28,6 +28,12 @@ curl -fsSL https://bootgly.com/install | bash -s -- [DIR] [--yes] [--no-wizard]
 | `--yes` | Fully non-interactive: auto-approves dependency installs (git / PHP 8.4 / extensions via the system package manager), skips the wizard and the global-CLI offer |
 | `--no-wizard` | Skips only the project wizard (dependency prompts still ask on a TTY) |
 
+With git/PHP/extensions already present, both flags touch nothing system-wide
+— the installer only clones into the target directory. `--yes` drives the
+system package manager (often via sudo) ONLY when a dependency is missing; on
+a user's machine, confirm with them before letting it do that (prefer
+`--no-wizard`, which fails fast naming what is missing).
+
 Environment overrides:
 
 - `BOOTGLY_KIT_REPO=<url|path>` — clone the kit from another remote.
