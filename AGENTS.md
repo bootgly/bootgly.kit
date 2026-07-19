@@ -177,7 +177,14 @@ storage/     runtime data (logs, pids, cache — gitignored)
 
 ## Go deeper
 
-- Documentation: https://docs.bootgly.com — Markdown index at
-  https://docs.bootgly.com/llms.txt
-- MCP server (docs search + page fetch): https://docs.bootgly.com/mcp
+- Documentation: https://docs.bootgly.com — the Guide (features), the Manual
+  (per component) and the Testing book. Every page is also served as Markdown:
+  append `.md` to any page URL, or start from
+  https://docs.bootgly.com/llms.txt (index) and
+  https://docs.bootgly.com/llms-full.txt (the whole corpus in one file).
+- MCP: docs.bootgly.com ships an MCP server (streamable HTTP) at
+  https://docs.bootgly.com/mcp — tools `search_bootgly` and `get_page_bootgly`
+  for searching and fetching docs while you build; server card at
+  https://bootgly.com/.well-known/mcp/server-card.json. Claude Code:
+  `claude mcp add --transport http bootgly https://docs.bootgly.com/mcp`
 - Agent setup prompt (this flow, self-contained): https://bootgly.com/prompt.md
