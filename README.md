@@ -36,6 +36,17 @@ bootgly project <Name> start
 
 The CLI advises these exact steps right after a project with database resources is created or imported.
 
+## 🧪 Tests
+
+`bootgly test` runs **your** workspace suites — register them in `tests/autoboot.php`; imported demo projects ship an example suite under `tests/` as a writing guide. The framework and platform suites run behind flags:
+
+```bash
+bootgly test              # your suites (tests/autoboot.php)
+bootgly test --bootgly    # the Bootgly framework suites
+bootgly test --console    # the Console platform suites
+bootgly test --web        # the Web platform suites
+```
+
 ## 🧩 Importing projects
 
 Run `bootgly project import` with no arguments to choose the source interactively — the Platforms (Demos, games and Web scaffolds) or a Git remote. Any directory with a `*.project.php` file at its root is a Bootgly project; import one directly from a git repository:
