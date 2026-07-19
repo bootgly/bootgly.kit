@@ -97,6 +97,62 @@ AI_AGENT=1 php bootgly test                     # kit test suites, agent-formatt
 php bootgly test --bootgly|--console|--web      # framework/platform suites instead
 ```
 
+## Database
+
+`migrate`/`seed` read the project connection from
+`projects/<Name>/configs/database/database.config.php`. SQLite needs no server
+— the shipped demos use it. Scratch projects don't have the config yet; create
+it first:
+
+```php
+<?php
+
+use Bootgly\API\Environment\Configs\Config;
+use Bootgly\API\Environment\Configs\Config\Types;
+
+
+return new Config(scope: 'database')
+   ->Enabled->bind(key: 'DB_ENABLED', default: true, cast: Types::Boolean)
+   ->Default->bind(key: 'DB_CONNECTION', default: 'sqlite')
+   ->Connections
+      ->SQLite
+         ->Driver->bind(key: '', default: 'sqlite')
+         ->Database->bind(key: 'DB_NAME', default: __DIR__ . '/../../database/app.sqlite')
+         ->up()
+      ->up();
+```
+
+(For MySQL, bind a `MySQL` connection with host/port/user/password keys —
+see https://docs.bootgly.com/guide/database-dbal/overview.md.)
+
+The workflow:
+
+```sh
+php bootgly project <Name> migrate create <name>   # scaffold database/migrations/<ts>_<name>.php (creates the dirs)
+php bootgly project <Name> migrate status          # applied × pending × missing
+php bootgly project <Name> migrate up [limit]      # apply pending migrations
+php bootgly project <Name> migrate down <steps>    # revert the last <steps> migrations
+php bootgly project <Name> seed create <name>      # scaffold database/seeders/<name>.php
+php bootgly project <Name> seed list
+php bootgly project <Name> seed run [name]         # run every seeder, or a single one
+```
+
+- Migrations are files returning `new Migration(Up:, Down:)` over the Schema
+  Blueprint DSL: `$Schema->create('items', function (Blueprint $Table): void {
+  $Table->add('id', Types::BigInteger)->generate()->constrain(Keys::Primary);
+  })` — `Types::*`, `Keys::*`, `$Table->add(...)->limit()/->default`.
+- Seeders return `new Seeder(Run: function (SQL $Database, Seed $Seed) {...})`
+  — return one query, a list of queries, or null; keep the files return-only.
+- Models (ORM) are plain classes mapped by attributes — `#[Table('items')]` on
+  the class, `#[Key]`/`#[Column]` on properties — conventionally in
+  `projects/<Name>/Models/`. Working reference shipped with the Web platform:
+  `Web/projects/Tasks` (`Models/Task.php` + migration + seeder).
+- `migrate sync` reconciles the migration history but asks for confirmation —
+  interactive only; headless it aborts safely.
+- Guides (Markdown): https://docs.bootgly.com/guide/database-dbal/overview.md,
+  database-migrations, database-seeders, database-orm, database-queries,
+  database-transactions, database-read-replicas (same URL pattern).
+
 ## Structure
 
 ```text
