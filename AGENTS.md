@@ -111,7 +111,7 @@ php bootgly test --bootgly|--console|--web      # framework/platform suites inst
 ## Database
 
 `migrate`/`seed` read the project connection from
-`projects/<Name>/configs/database/database.config.php`. SQLite needs no server
+`projects/<Name>/configs/database/database.Config.php`. SQLite needs no server
 — the shipped demos use it. Scratch projects don't have the config yet; create
 it first:
 

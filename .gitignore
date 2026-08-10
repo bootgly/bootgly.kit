@@ -27,7 +27,7 @@ composer.lock
 # Examples
 _*.example.php
 # Tests
-_*.test.php
+_*.Test.php
 
 
 #-- /Bootgly --#

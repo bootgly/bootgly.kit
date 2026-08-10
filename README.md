@@ -49,7 +49,7 @@ bootgly test --web        # the Web platform suites
 
 ## 🧩 Importing projects
 
-Run `bootgly project import` with no arguments to choose the source interactively — the Platforms (Demos, games and Web scaffolds) or a Git remote. Any directory with a `*.project.php` file at its root is a Bootgly project; import one directly from a git repository:
+Run `bootgly project import` with no arguments to choose the source interactively — the Platforms (Demos, games and Web scaffolds) or a Git remote. Any directory with a `*.Project.php` file at its root is a Bootgly project; import one directly from a git repository:
 
 ```bash
 php bootgly project import https://github.com/foo/project1 Project1
