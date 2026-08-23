@@ -62,7 +62,6 @@ wizard opens. Flags:
 | `--port=` | int | WPI only: HTTP port written into the project file (default `8080`; the `PORT` env overrides it at runtime) |
 | `--description=`, `--version=`, `--author=` | string | Project metadata |
 | `--default` | — | Register the project as the web default (WPI) |
-| `--dry-run` | — | Preview without writing |
 
 Recipes:
 
@@ -107,6 +106,42 @@ php bootgly project <Name> seed run             # when the project ships databas
 AI_AGENT=1 php bootgly test                     # kit test suites, agent-formatted output
 php bootgly test --bootgly|--console|--web      # framework/platform suites instead
 ```
+
+## HTTPS (Auto-TLS)
+
+A WPI project can issue and renew its own Let's Encrypt certificates over HTTP-01
+— no certificate files to manage, hot-swapped on renewal. The scaffold ships the
+block commented out in `projects/<Name>/<Name>.Project.php`:
+
+```php
+secure: new AutoTLS(
+   domains: ['example.com'],
+   email: 'admin@example.com',
+   staging: true, // validate with the staging CA first — flip to false for the real certificate
+),
+user: 'debian',   // demote workers from root (root is needed to bind 443 and 80)
+group: 'debian',
+```
+
+Requirements:
+
+- Start as root: `sudo php bootgly project <Name> start`. Binding `:443` and the
+  HTTP-01 gate on `:80` needs it, and the workers demote immediately afterwards.
+- `user`/`group` are mandatory here — Auto-TLS started as root without `user`
+  refuses to boot rather than leave workers and writable TLS state owned by root.
+  The scaffold writes `debian`; change it to the account that owns the checkout.
+- The domain must resolve to this host and `:80` must be reachable by the CA.
+- Certificates and account keys live under `storage/security/tls/`.
+
+Flow: boot with `staging: true`, confirm the staging certificate is issued, stop,
+flip to `staging: false`, start again. Changing `domains` or `staging` derives a
+new certificate store — expected, and the previous one is never reused.
+
+Behind Cloudflare, HTTP-01 validates with the orange cloud on, even with
+*Always Use HTTPS*. The one constraint: the zone must be **Full**, not
+**Full (strict)**. Under strict, the origin's bootstrap self-signed certificate
+makes the edge answer `526` before the challenge ever reaches the server, and
+first issuance never completes — it looks like a hang with no visible cause.
 
 ## Database
 
@@ -198,4 +233,3 @@ storage/     runtime data (logs, pids, cache — gitignored)
   for searching and fetching docs while you build; server card at
   https://bootgly.com/.well-known/mcp/server-card.json. Claude Code:
   `claude mcp add --transport http bootgly https://docs.bootgly.com/mcp`
-- Agent setup prompt (this flow, self-contained): https://bootgly.com/prompt.md
