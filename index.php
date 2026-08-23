@@ -22,7 +22,7 @@ foreach (['Console', 'Web'] as $platform) {
 
 // @ Autoload Composer (if exists) or autoboot the Bootgly platform (git submodule):
 $booted =
-   (@include __DIR__ . '/@imports/autoload.php') ||
+   (@include __DIR__ . '/vendor/autoload.php') ||
    (@include __DIR__ . '/Bootgly/autoboot.php');
 
 if ($booted === false) {

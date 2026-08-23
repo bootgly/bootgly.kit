@@ -17,6 +17,8 @@ composer.lock
 ## Root folders
 # Boot
 @/*
+vendor
+# Legacy: installs made before the vendor-dir was standardised
 @imports
 !@/autoboot.php
 
