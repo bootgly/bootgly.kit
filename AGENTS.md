@@ -220,6 +220,11 @@ storage/     runtime data (logs, pids, cache — gitignored)
   whole by `project create/import`.
 - Do not add Composer packages for framework-core concerns (HTTP server,
   autoloading, testing, config, logging): Bootgly ships them natively.
+- Do not install the framework through Composer. The kit delivers it as the
+  pinned `Bootgly/` submodule, and the entrypoint prefers `vendor/autoload.php`
+  when one exists — so a stray framework copy under `vendor/` would silently
+  replace the version you pinned. Composer is still yours to use for your own
+  project dependencies.
 
 ## Go deeper
 

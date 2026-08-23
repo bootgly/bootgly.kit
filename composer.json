@@ -26,13 +26,6 @@
    ],
 
 
-   "require": {
-      "bootgly/bootgly": "dev-main",
-      "bootgly/bootgly-console": "dev-main",
-      "bootgly/bootgly-web": "dev-main"
-   },
-   "minimum-stability": "dev",
-
    "scripts": {
       "post-create-project-cmd": [
          "@php -r \"echo PHP_EOL . 'Bootgly Kit ready!' . PHP_EOL . PHP_EOL . 'Create your first project with the wizard:' . PHP_EOL . '  php bootgly project create' . PHP_EOL . PHP_EOL;\""
