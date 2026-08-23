@@ -11,6 +11,13 @@ flags, which are intentionally left out of the user-facing docs.
   pinned as the `Bootgly/` git submodule.
 - Optional platform submodules: `Console/` (opinionated CLI extras) and
   `Web/` (opinionated WPI extras). They stay empty until initialized.
+- Initializing a platform lands it on a **release**: the newest tag reachable
+  from the kit's pin (a stable one when it exists, otherwise the newest
+  pre-release). It never moves forward past the pin. A submodule that shows as
+  modified in `git status` right after a fresh install is that correction, not
+  a change of yours — do not revert it, and do not use
+  `git submodule update --remote`, which jumps to the branch tip and lands on
+  unreleased development work.
 - Run every command from the kit root as `php bootgly ...` (drop the `php `
   prefix if the CLI was installed globally with `sudo php bootgly setup`).
 
