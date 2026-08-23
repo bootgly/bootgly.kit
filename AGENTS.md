@@ -19,17 +19,22 @@ flags, which are intentionally left out of the user-facing docs.
 The canonical installer accepts arguments after `--`:
 
 ```sh
-curl -fsSL https://bootgly.com/install | bash -s -- [DIR] [--yes] [--no-wizard]
+curl -fsSL https://bootgly.com/install | bash -s -- [DIR] [--yes] [--no-wizard] [--template[=private|public]] [--no-template]
 ```
 
 | Argument | Effect |
 | --- | --- |
-| `DIR` | Target directory (default `bootgly.kit`) |
+| `DIR` | Target directory (default `bootgly.kit`) — also the name of the repository when one is created |
 | `--yes` | Fully non-interactive: auto-approves dependency installs (git / PHP 8.4 / extensions via the system package manager), skips the wizard and the global-CLI offer |
-| `--no-wizard` | Skips only the project wizard (dependency prompts still ask on a TTY) |
+| `--no-wizard` | Skips the project wizard, and with it the offer to create your own repository (dependency prompts still ask on a TTY) |
+| `--template[=private\|public]` | Create the kit as a repository of your own from the GitHub template instead of cloning it — needs a GitHub CLI that is already signed in. Defaults to `private` |
+| `--no-template` | Never offer it; always clone the upstream kit |
 
 With git/PHP/extensions already present, both flags touch nothing system-wide
-— the installer only clones into the target directory. `--yes` drives the
+— the installer only clones into the target directory. Neither `--yes` nor
+`--no-wizard` ever creates anything on a GitHub account, and neither reaches
+the GitHub API at all: only a fully interactive run offers it, and only
+`--template` does it headlessly. `--yes` drives the
 system package manager (often via sudo) ONLY when a dependency is missing; on
 a user's machine, confirm with them before letting it do that (prefer
 `--no-wizard`, which fails fast naming what is missing).
