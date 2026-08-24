@@ -9,6 +9,16 @@ flags, which are intentionally left out of the user-facing docs.
 
 - A starter checkout: your application lives in `projects/`; the framework is
   pinned as the `Bootgly/` git submodule.
+- The kit is a delivery vehicle — **never commit to it**. Everything the
+  tooling writes at its root is gitignored; update it with `git pull` +
+  `git submodule update --init`. Your projects are the repositories: `create`
+  boots each one (its own `.git`, scaffold as the initial commit; `--no-git`
+  opts out), a URL import keeps its clone (history + `origin`), and Composer
+  runs per project (`projects/<Name>/vendor/`).
+- The shipped examples — the framework Demos plus each initialized platform's
+  projects — are imported automatically when the kit is prepared, as living
+  guides for people and AI agents. They arrive UNBOOTED (no `.git`); adopt one
+  with `php bootgly project <Name> boot`. A deleted example stays deleted.
 - Optional platform submodules: `Console/` (opinionated CLI extras) and
   `Web/` (opinionated WPI extras). They stay empty until initialized.
 - Initializing a platform lands it on a **release**: the newest tag reachable
@@ -26,22 +36,17 @@ flags, which are intentionally left out of the user-facing docs.
 The canonical installer accepts arguments after `--`:
 
 ```sh
-curl -fsSL https://bootgly.com/install | bash -s -- [DIR] [--yes] [--no-wizard] [--template[=private|public]] [--no-template]
+curl -fsSL https://bootgly.com/install | bash -s -- [DIR] [--yes] [--no-wizard]
 ```
 
 | Argument | Effect |
 | --- | --- |
-| `DIR` | Target directory (default `bootgly.kit`) — also the name of the repository when one is created |
+| `DIR` | Target directory (default `bootgly.kit`) |
 | `--yes` | Fully non-interactive: auto-approves dependency installs (git / PHP 8.4 / extensions via the system package manager), skips the wizard and the global-CLI offer |
-| `--no-wizard` | Skips the project wizard, and with it the offer to create your own repository (dependency prompts still ask on a TTY) |
-| `--template[=private\|public]` | Create the kit as a repository of your own from the GitHub template instead of cloning it — needs a GitHub CLI that is already signed in. Defaults to `private` |
-| `--no-template` | Never offer it; always clone the upstream kit |
+| `--no-wizard` | Skips the project wizard (dependency prompts still ask on a TTY) |
 
 With git/PHP/extensions already present, both flags touch nothing system-wide
-— the installer only clones into the target directory. Neither `--yes` nor
-`--no-wizard` ever creates anything on a GitHub account, and neither reaches
-the GitHub API at all: only a fully interactive run offers it, and only
-`--template` does it headlessly. `--yes` drives the
+— the installer only clones into the target directory. `--yes` drives the
 system package manager (often via sudo) ONLY when a dependency is missing; on
 a user's machine, confirm with them before letting it do that (prefer
 `--no-wizard`, which fails fast naming what is missing).
@@ -74,6 +79,7 @@ wizard opens. Flags:
 | `--port=` | int | WPI only: HTTP port written into the project file (default `8080`; the `PORT` env overrides it at runtime) |
 | `--description=`, `--version=`, `--author=` | string | Project metadata |
 | `--default` | — | Register the project as the web default (WPI) |
+| `--no-git` | — | Skip the boot hook (the project's own git repository) on from-scratch creates |
 
 Recipes:
 
@@ -115,9 +121,16 @@ php bootgly project <Name> start                # boot it — WPI servers daemon
 php bootgly project <Name> stop                 # stop a running server project
 php bootgly project <Name> migrate up           # when the project ships database/migrations
 php bootgly project <Name> seed run             # when the project ships database/seeders
-AI_AGENT=1 php bootgly test                     # kit test suites, agent-formatted output
-php bootgly test --bootgly|--console|--web      # framework/platform suites instead
+php bootgly project <Name> boot                 # initialize a project's own resources (today: its git repo)
+cd projects/<Name> && AI_AGENT=1 php ../../bootgly test   # that project's suites (agent output)
+cd projects && AI_AGENT=1 php ../bootgly test             # every registered project, one merged run
+php bootgly test --bootgly|--console|--web      # framework/platform suites (work from anywhere)
 ```
+
+`bootgly test` resolves its scope from the working directory and states it on
+the run's first line. From the kit root a headless run executes nothing: it
+prints the registered projects and exits non-zero — `cd` into the scope you
+mean.
 
 ## HTTPS (Auto-TLS)
 
@@ -217,15 +230,20 @@ php bootgly project <Name> seed run [name]         # run every seeder, or a sing
 Bootgly/     framework (git submodule — read-only)
 Console/     Console platform (optional submodule — read-only)
 Web/         Web platform (optional submodule — read-only)
-projects/    your applications + Bootgly.projects.php (machine-managed registry)
-tests/       your test suites (registered in tests/autoboot.php)
-public/      web entry (index.php front controller)
+projects/    your applications, each a git repository of its own + Bootgly.projects.php (machine-managed registry)
 scripts/     operational scripts
-storage/     runtime data (logs, pids, cache — gitignored)
+storage/     runtime data (logs, pids, cache)
 ```
+
+Every resource dir above is gitignored by the kit — tests live PER PROJECT
+(`projects/<Name>/tests/autoboot.php`, a `Suites` registry scaffolded by
+`create`), and Composer dependencies live per project too
+(`projects/<Name>/composer.json` + `vendor/`).
 
 ## Do not
 
+- Do not commit to the kit repository — it is a delivery vehicle, not yours to
+  version. Your projects under `projects/` are the repositories.
 - Do not edit anything inside `Bootgly/`, `Console/` or `Web/` — they are
   pinned submodules; changes belong upstream.
 - Do not hand-edit `projects/Bootgly.projects.php` — the registry is rewritten

@@ -36,31 +36,31 @@ _*.Test.php
 # ...
 
 #-- resource dirs --#
+# The kit is a delivery vehicle: the user never commits to it, and everything
+# the tooling writes at its root is machine state. Ignoring the resource dirs
+# whole is what keeps `git status` clean and `git pull` conflict-free.
 
 #- /docs
 # Ignore user docs (project specs, notes)
 /docs/
 
 #- /projects
-# ...
+# Ignore user projects — each one is its own git repository
+/projects/
+
+#- /public
+# Ignore leftover kit-level public dirs (assets are per project — the serving
+# APIs are jailed to the project directory)
+/public/
 
 #- /scripts
-# Ignore private scripts
-/scripts/_*.php
+# Ignore operational scripts copied by `bootgly boot`
+/scripts/
 
 #- /storage
-# Ignore all files here
-/storage/*.*
-# Ignore all folder starting with @ here
-/storage/@*/
-# Ignore known folders
-/storage/cache/*
-/storage/pids/*
-/storage/logs/*
-/storage/queues/*
-/storage/schedule/*
-/storage/security/*
-/storage/temp/*
-/storage/tests/*
-/storage/tests/snapshots/*
-/storage/sessions/*
+# Ignore runtime data (logs, pids, cache, ...)
+/storage/
+
+#- /tests
+# Ignore leftover kit-level test dirs (tests are per project now)
+/tests/

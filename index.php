@@ -20,10 +20,10 @@ foreach (['Console', 'Web'] as $platform) {
    }
 }
 
-// @ Autoload Composer (if exists) or autoboot the Bootgly platform (git submodule):
-$booted =
-   (@include __DIR__ . '/vendor/autoload.php') ||
-   (@include __DIR__ . '/Bootgly/autoboot.php');
+// @ Autoboot the Bootgly platform (git submodule) — the ONE framework delivery.
+// Composer is per project: each project's vendor/autoload.php is loaded by the
+// framework when that project boots.
+$booted = (@include __DIR__ . '/Bootgly/autoboot.php');
 
 if ($booted === false) {
    exit(1);

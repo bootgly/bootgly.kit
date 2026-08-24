@@ -14,7 +14,7 @@ One kit for both platforms: create **Console** (CLI / TUI) or **Web** projects f
 curl -fsSL https://bootgly.com/install | bash
 ```
 
-The installer checks your environment (git + PHP 8.4+), gets this kit — offering to create it as **a repository of your own** from the GitHub template when the GitHub CLI is signed in, cloning it otherwise — initializes the Bootgly platform and opens the **project wizard** — where you pick your extra platforms (Console and/or Web), boot the resource folders and create your first project **from scratch** or by **importing** a platform project (like the Demos) or a Git remote.
+The installer checks your environment (git + PHP 8.4+), clones this kit, initializes the Bootgly platform and opens the **project wizard** — where you pick your extra platforms (Console and/or Web), boot the resource folders and create your first project **from scratch** or by **importing** a platform project (like the Demos) or a Git remote.
 
 Start your project right after:
 
@@ -38,18 +38,21 @@ The CLI advises these exact steps right after a project with database resources 
 
 ## 🧪 Tests
 
-`bootgly test` runs **your** workspace suites — register them in `tests/autoboot.php`; imported demo projects ship an example suite under `tests/` as a writing guide. The framework and platform suites run behind flags:
+`bootgly test` runs the suites of **where you stand** — every project carries its own `tests/` registry (scaffolded with an example suite), and the working directory selects the scope:
 
 ```bash
-bootgly test              # your suites (tests/autoboot.php)
-bootgly test --bootgly    # the Bootgly framework suites
-bootgly test --console    # the Console platform suites
-bootgly test --web        # the Web platform suites
+cd projects/App && bootgly test    # this project's suites
+cd projects && bootgly test        # every registered project, one merged run
+bootgly test --bootgly             # the Bootgly framework suites
+bootgly test --console             # the Console platform suites
+bootgly test --web                 # the Web platform suites
 ```
+
+From the kit root, a terminal gets a picker (one project, or all); a headless run prints the registered projects and exits non-zero. The first line of every run states the resolved scope.
 
 ## 🧩 Importing projects
 
-Run `bootgly project import` with no arguments to choose the source interactively — the Platforms (Demos, games and Web scaffolds) or a Git remote. Any directory with a `*.Project.php` file at its root is a Bootgly project; import one directly from a git repository:
+The shipped examples — the framework Demos, the Console games and the Web apps — are **imported automatically** when the kit is prepared, as living guides; they arrive unbooted (no repository of their own) and `php bootgly project <Name> boot` adopts one. Any directory with a `*.Project.php` file at its root is a Bootgly project; import your own directly from a git repository (the clone keeps its history and `origin`, so you keep pushing from `projects/`):
 
 ```bash
 php bootgly project import https://github.com/foo/project1 Project1
@@ -62,11 +65,12 @@ bootgly.kit/
 ├── Bootgly/     ← the Bootgly platform (git submodule)
 ├── Console/     ← Console platform extras (optional submodule)
 ├── Web/         ← Web platform extras (optional submodule)
-├── projects/    ← your projects (installed by `bootgly boot`)
-├── tests/       ← your test suites (`bootgly test`)
+├── projects/    ← your projects — each one a git repository of its own
 ├── bootgly      ← the Bootgly CLI launcher
 └── index.php    ← the Web front controller
 ```
+
+The kit is a delivery vehicle: you never commit to it — your projects are the repositories (`create` boots each one with the scaffold as its initial commit), and Composer runs per project. Update the kit anytime with `git pull` + `git submodule update --init`.
 
 Install the CLI globally (optional):
 
