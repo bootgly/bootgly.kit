@@ -80,6 +80,7 @@ wizard opens. Flags:
 | `--description=`, `--version=`, `--author=` | string | Project metadata |
 | `--default` | — | Register the project as the web default (WPI) |
 | `--no-git` | — | Skip the boot hook (the project's own git repository) on from-scratch creates |
+| `--refresh` | — | With `--from=`, replace a target that is already a git repository (refused without it) |
 
 Recipes:
 
@@ -127,8 +128,10 @@ cd projects && AI_AGENT=1 php ../bootgly test             # every registered pro
 php bootgly test --bootgly|--console|--web      # framework/platform suites (work from anywhere)
 ```
 
-`bootgly test` resolves its scope from the working directory and states it on
-the run's first line. From the kit root a headless run executes nothing: it
+`bootgly test` resolves its scope from the working directory. A human run
+states it on the first line; an agent run prints the JSON results document
+instead, so check the directory you are in — two agent runs from different
+scopes look alike. From the kit root a headless run executes nothing: it
 prints the registered projects and exits non-zero — `cd` into the scope you
 mean.
 
