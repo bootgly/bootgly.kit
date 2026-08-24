@@ -15,12 +15,13 @@ flags, which are intentionally left out of the user-facing docs.
   boots each one (its own `.git`, scaffold as the initial commit; `--no-git`
   opts out), a URL import keeps its clone (history + `origin`), and Composer
   runs per project (`projects/<Name>/vendor/`).
-- The shipped examples — the framework Demos plus each initialized platform's
-  projects — are imported automatically when the kit is prepared, as living
-  guides for people and AI agents. They arrive UNBOOTED (no `.git`); adopt one
-  with `php bootgly project <Name> boot`. A deleted example stays deleted.
-- Optional platform submodules: `Console/` (opinionated CLI extras) and
-  `Web/` (opinionated WPI extras). They stay empty until initialized.
+- The shipped examples — the framework Demos plus every platform's projects —
+  are imported automatically when the kit is prepared, as living guides for
+  people and AI agents. They arrive UNBOOTED (no `.git`); adopt one with
+  `php bootgly project <Name> boot`. A deleted example stays deleted.
+- Platform submodules: `Console/` (opinionated CLI extras) and `Web/`
+  (opinionated WPI extras). A fresh kit sets up BOTH — nobody is asked to
+  choose — and `--platform=` is how a run asks for less.
 - Initializing a platform lands it on a **release**: the newest tag reachable
   from the kit's pin (a stable one when it exists, otherwise the newest
   pre-release). It never moves forward past the pin. A submodule that shows as

@@ -14,7 +14,7 @@ One kit for both platforms: create **Console** (CLI / TUI) or **Web** projects f
 curl -fsSL https://bootgly.com/install | bash
 ```
 
-The installer checks your environment (git + PHP 8.4+), clones this kit, initializes the Bootgly platform and opens the **project wizard** — where you pick your extra platforms (Console and/or Web), boot the resource folders and create your first project **from scratch** or by **importing** a platform project (like the Demos) or a Git remote.
+The installer checks your environment (git + PHP 8.4+), clones this kit, initializes the Bootgly platform and opens the **project wizard**. Nothing is asked about platforms: both (Console and Web) are set up, and every shipped example is imported as a living guide. The wizard then asks only how you want to start — **use one of the imported projects**, create one **from scratch**, or **import** from a Git remote.
 
 Start your project right after:
 
@@ -63,8 +63,8 @@ php bootgly project import https://github.com/foo/project1 Project1
 ```text
 bootgly.kit/
 ├── Bootgly/     ← the Bootgly platform (git submodule)
-├── Console/     ← Console platform extras (optional submodule)
-├── Web/         ← Web platform extras (optional submodule)
+├── Console/     ← Console platform extras (git submodule)
+├── Web/         ← Web platform extras (git submodule)
 ├── projects/    ← your projects — each one a git repository of its own
 ├── bootgly      ← the Bootgly CLI launcher
 └── index.php    ← the Web front controller
