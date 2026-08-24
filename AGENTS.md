@@ -96,7 +96,7 @@ php bootgly project create App --yes --platform=none --interfaces=WPI --port=808
 php bootgly project create MyServer --yes --platform=none --from=Demo/HTTP_Server_CLI
 
 # Copy of a Web platform project (initializes Web/ when missing)
-php bootgly project create MyBlog --yes --platform=web --from=Blog
+php bootgly project create MyBlog --yes --platform=web --from=Demo/Blog
 
 # Import from a git repository (the URL is required headless)
 php bootgly project import <url> [Name] --yes
