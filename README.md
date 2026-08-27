@@ -75,8 +75,11 @@ The kit is a delivery vehicle: you never commit to it — your projects are the 
 Install the CLI globally (optional):
 
 ```bash
-sudo php bootgly setup
+php bootgly setup
 ```
+
+Keep PHP and the Kit unprivileged. Setup requests sudo only for the fixed
+system installation operation when `/usr/local/bin` requires it.
 
 ## 📚 Documentation
 

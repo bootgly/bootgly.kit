@@ -30,7 +30,8 @@ flags, which are intentionally left out of the user-facing docs.
   `git submodule update --remote`, which jumps to the branch tip and lands on
   unreleased development work.
 - Run every command from the kit root as `php bootgly ...` (drop the `php `
-  prefix if the CLI was installed globally with `sudo php bootgly setup`).
+  prefix if the CLI was installed globally with `php bootgly setup`; setup
+  delegates only its fixed system operation through sudo when required).
 
 ## Non-interactive install
 
@@ -154,11 +155,15 @@ group: 'debian',
 
 Requirements:
 
-- Start as root: `sudo php bootgly project <Name> start`. Binding `:443` and the
-  HTTP-01 gate on `:80` needs it, and the workers demote immediately afterwards.
+- Start from a separate deployment whose complete executable PHP tree is
+  root-controlled. Use this explicit form:
+  `sudo /absolute/root-owned/php /absolute/root-owned/bootgly project <Name> start`.
+  Binding `:443` and the HTTP-01 gate on `:80` needs it, and the workers demote
+  immediately afterwards.
 - `user`/`group` are mandatory here — Auto-TLS started as root without `user`
   refuses to boot rather than leave workers and writable TLS state owned by root.
-  The scaffold writes `debian`; change it to the account that owns the checkout.
+  The scaffold writes `debian`; change it to the service account that owns the
+  writable runtime state, while the executable deployment remains root-controlled.
 - The domain must resolve to this host and `:80` must be reachable by the CA.
 - Certificates and account keys live under `storage/security/tls/`.
 
