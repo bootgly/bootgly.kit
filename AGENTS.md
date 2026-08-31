@@ -80,7 +80,6 @@ wizard opens. Flags:
 | `--platform=` | `console` \| `web` \| `console,web` \| `none` | Platform submodules to initialize on first run. **A fresh kit without this flag initializes ALL platforms (network clones)** — pass `none` for a base-only setup |
 | `--port=` | int | WPI only: HTTP port written into the project file (default `8080`; the `PORT` env overrides it at runtime) |
 | `--description=`, `--version=`, `--author=` | string | Project metadata |
-| `--default` | — | Register the project as the web default (WPI) |
 | `--no-git` | — | Skip the boot hook (the project's own git repository) on from-scratch creates |
 | `--refresh` | — | With `--from=`, replace a target that is already a git repository (refused without it) |
 
@@ -90,8 +89,8 @@ Recipes:
 # Console application (base platform only)
 php bootgly project create App --yes --platform=none
 
-# Web (HTTP) server on port 8080, set as the default project
-php bootgly project create App --yes --platform=none --interfaces=WPI --port=8080 --default
+# Web (HTTP) server on port 8080
+php bootgly project create App --yes --platform=none --interfaces=WPI --port=8080
 
 # Copy of a shipped example (framework sources work base-only)
 php bootgly project create MyServer --yes --platform=none --from=Demo/HTTP_Server_CLI
