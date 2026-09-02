@@ -20,7 +20,7 @@ Start your project right after:
 
 ```bash
 cd bootgly.kit
-bootgly project list
+bootgly projects list
 bootgly project <Name> start
 ```
 
@@ -55,7 +55,7 @@ From the kit root, a terminal gets a picker (one project, or all); a headless ru
 The shipped examples — the framework Demos, the Console games and the Web apps — are **imported automatically** when the kit is prepared, as living guides; they arrive unbooted (no repository of their own) and `php bootgly project <Name> boot` adopts one. Any directory with a `*.Project.php` file at its root is a Bootgly project; import your own directly from a git repository (the clone keeps its history and `origin`, so you keep pushing from `projects/`):
 
 ```bash
-php bootgly project import https://github.com/foo/project1 Project1
+php bootgly projects import https://github.com/foo/project1 Project1
 ```
 
 ## 🗂 Structure

@@ -42,7 +42,7 @@ if ($booted === false) {
 
    Then create your first project with the wizard:
    ---------------------------------------\033[1;36m
-   php bootgly project create
+   php bootgly projects create
    \033[0m---------------------------------------
 
 
