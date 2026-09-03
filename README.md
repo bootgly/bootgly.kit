@@ -70,7 +70,7 @@ bootgly.kit/
 └── index.php    ← the Web front controller
 ```
 
-The kit is a delivery vehicle: you never commit to it — your projects are the repositories (`create` boots each one with the scaffold as its initial commit), and Composer runs per project. Update the kit anytime with `git pull` + `git submodule update --init`.
+The kit is a delivery vehicle: you never commit to it — your projects are the repositories (`create` boots each one with the scaffold as its initial commit), and Composer runs per project. Update the kit anytime with `php bootgly kit upgrade` (and go back with `php bootgly kit downgrade`) — `php bootgly kit list` shows the releases; it works on a clone and on a kit generated from this template alike.
 
 Install the CLI globally (optional):
 

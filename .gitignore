@@ -54,7 +54,7 @@ _*.Test.php
 /public/
 
 #- /scripts
-# Ignore operational scripts copied by `bootgly boot`
+# Ignore operational scripts copied by `bootgly kit boot`
 /scripts/
 
 #- /storage

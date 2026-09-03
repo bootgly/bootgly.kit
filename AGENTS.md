@@ -10,8 +10,10 @@ flags, which are intentionally left out of the user-facing docs.
 - A starter checkout: your application lives in `projects/`; the framework is
   pinned as the `Bootgly/` git submodule.
 - The kit is a delivery vehicle — **never commit to it**. Everything the
-  tooling writes at its root is gitignored; update it with `git pull` +
-  `git submodule update --init`. Your projects are the repositories: `create`
+  tooling writes at its root is gitignored; update it with `php bootgly kit upgrade`
+  (`php bootgly kit list` to see the releases, `php bootgly kit downgrade` to go
+  back, `--json` and `--yes` for headless runs) — never `git pull`, which a kit
+  generated from the template cannot do anyway. Your projects are the repositories: `create`
   boots each one (its own `.git`, scaffold as the initial commit; `--no-git`
   opts out), a URL import keeps its clone (history + `origin`), and Composer
   runs per project (`projects/<Name>/vendor/`).
