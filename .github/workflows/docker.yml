@@ -1,0 +1,201 @@
+# Publishes bootgly/bootgly.kit to Docker Hub on every kit tag.
+#
+# The KIT is the product: framework + Console + Web + the kit entry, pinned by
+# this repository's submodules. It is built HERE, and not in the framework repo,
+# because a kit tag is the only reference where all three are already published
+# and pinned — the framework's own tag exists before the gitlinks are updated.
+#
+# Tags follow "version is the axis" — the kit has one variant, so the version
+# tag is the whole scheme. Pre-releases (-beta.N, -rc.N) publish their exact
+# version plus a moving channel alias only; they never move `latest`.
+#
+# The benchmark harness images are NOT downstream of this one: they build FROM
+# bootgly/bootgly (the framework image), and that repository's release workflow
+# is what triggers their rebuild.
+
+on:
+  push:
+    tags:
+      - 'v*'
+  workflow_dispatch:
+    inputs:
+      version:
+        description: 'Version to tag (e.g. 1.0.0-rc.1). Required on manual dispatch.'
+        required: false
+        default: ''
+      overwrite:
+        description: 'Republish an ALREADY PUBLISHED exact version tag (destructive: it changes what that tag means for everyone who pinned it).'
+        required: false
+        default: 'false'
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+
+    steps:
+      # ! No submodules: the image git-clones this repository at the tag. The
+      #   checkout here exists only to read which framework commit the tag pins.
+      - name: Checkout the kit
+        uses: actions/checkout@v5
+        with:
+          # ! The default branch moves past the tag; read the gitlink of the ref
+          #   this run actually builds, or the image is stamped with a framework
+          #   revision it does not contain.
+          ref: ${{ github.ref_type == 'tag' && github.ref_name || format('v{0}', inputs.version) }}
+
+      - name: Resolve the pinned framework revision
+        id: source
+        run: |
+          set -euo pipefail
+          SHA="$(git ls-tree HEAD Bootgly | awk '{print $3}')"
+          if [ -z "$SHA" ]; then
+            echo "::error::Could not read the Bootgly gitlink of this tag."
+            exit 1
+          fi
+          echo "framework_sha=$SHA" >> "$GITHUB_OUTPUT"
+          echo "Framework pinned at: $SHA"
+
+      # ! Every untrusted value reaches the shell through `env:`, never through
+      #   `${{ }}` inside `run:` — GitHub substitutes those TEXTUALLY before bash
+      #   parses the script, and git accepts shell metacharacters in a ref name
+      #   (`git check-ref-format 'refs/tags/v1.0.0";id;#'` is legal). This job
+      #   holds the Docker Hub credentials for the whole `bootgly/*` namespace,
+      #   so a crafted tag push must not become a command.
+      - name: Resolve version and tags
+        id: version
+        env:
+          REF_TYPE: ${{ github.ref_type }}
+          REF_NAME: ${{ github.ref_name }}
+          INPUT_VERSION: ${{ inputs.version }}
+        run: |
+          set -euo pipefail
+          if [ "${REF_TYPE:-}" = 'tag' ]; then
+            V="${REF_NAME:-}"
+          else
+            V="${INPUT_VERSION:-}"
+          fi
+          V="${V#v}"
+          if [ -z "$V" ]; then
+            echo "::error::No version resolved (provide the 'version' input on manual dispatch)."
+            exit 1
+          fi
+          echo "value=$V" >> "$GITHUB_OUTPUT"
+
+          # ! Tag scheme — the version IS the tag. The kit has one variant, so
+          #   there is no suffix to confuse it with:
+          #
+          #     stable 1.2.3 → 1.2.3  1.2  1  latest
+          #     pre-release  → 1.0.0-rc.1  rc
+          #
+          # ? A pre-release must NEVER move `latest` or the major/minor aliases:
+          #   `docker pull bootgly/bootgly.kit` would hand unreleased code to
+          #   every user. Pre-releases publish their exact version plus a moving
+          #   channel alias (`beta`, `rc`) that people opt into deliberately.
+          PRERELEASE=false
+          case "$V" in *-*) PRERELEASE=true ;; esac
+
+          REPO=bootgly/bootgly.kit
+          if [ "$PRERELEASE" = "true" ]; then
+            CHANNEL="${V#*-}"        # 1.0.0-rc.1 → rc.1
+            CHANNEL="${CHANNEL%%.*}" # rc.1       → rc
+            TAGS="$REPO:$V"$'\n'"$REPO:$CHANNEL"
+          else
+            MAJOR="${V%%.*}"
+            MINOR="${V%.*}"
+            TAGS="$REPO:$V"$'\n'"$REPO:$MINOR"$'\n'"$REPO:$MAJOR"$'\n'"$REPO:latest"
+          fi
+
+          {
+            echo "prerelease=$PRERELEASE"
+            echo "tags<<TAGS_EOF"
+            echo "$TAGS"
+            echo "TAGS_EOF"
+          } >> "$GITHUB_OUTPUT"
+
+          echo "Resolved version: $V (prerelease: $PRERELEASE)"
+          echo "tags:"; echo "$TAGS"
+
+      # ? An exact version tag is IMMUTABLE — it names the code of one published
+      #   release, and people pin it. Re-pushing one would hand a different kit
+      #   to everyone already on it.
+      #
+      # ! The guard fails CLOSED on anything it cannot read. `404` is free. `401`
+      #   is ALSO free here, but only while `bootgly/bootgly.kit` does not exist
+      #   yet — the registry hides an unknown repository behind auth, and every
+      #   tag of this repository answers `401` today. Once the repository is
+      #   published, a `401` means the token failed instead, so the step warns
+      #   loudly rather than passing quietly. A `429` (Hub rate-limits the
+      #   anonymous pull token this step mints) stops the run: `curl -s` calls it
+      #   success, and reading it as "free" is how a published tag gets replaced.
+      - name: Refuse to overwrite a published version tag
+        if: inputs.overwrite != 'true'
+        env:
+          VERSION: ${{ steps.version.outputs.value }}
+        run: |
+          set -euo pipefail
+          TOKEN="$(curl -fsSL \
+            'https://auth.docker.io/token?service=registry.docker.io&scope=repository:bootgly/bootgly.kit:pull' \
+            | sed -n 's/.*"token":"\([^"]*\)".*/\1/p')"
+          if [ -z "$TOKEN" ]; then
+            echo "::error::Could not obtain a registry pull token — cannot prove bootgly/bootgly.kit:$VERSION is free."
+            exit 1
+          fi
+          CODE="$(curl -s -o /dev/null -w '%{http_code}' \
+            -H "Authorization: Bearer $TOKEN" \
+            -H 'Accept: application/vnd.oci.image.index.v1+json' \
+            -H 'Accept: application/vnd.docker.distribution.manifest.list.v2+json' \
+            -H 'Accept: application/vnd.docker.distribution.manifest.v2+json' \
+            "https://registry-1.docker.io/v2/bootgly/bootgly.kit/manifests/$VERSION")"
+          case "$CODE" in
+            404)
+              echo "bootgly/bootgly.kit:$VERSION is free."
+              ;;
+            401)
+              echo "::warning::The registry answered 401 for bootgly/bootgly.kit:$VERSION — expected while the repository does not exist on Hub yet. Once it is published, a 401 means the pull token failed and this step is no longer proving anything."
+              ;;
+            200)
+              echo "::error::bootgly/bootgly.kit:$VERSION is already published. An exact version tag is immutable — cut a new version, or dispatch again with overwrite=true if you really mean to replace what that tag hands every user."
+              exit 1
+              ;;
+            *)
+              echo "::error::The registry answered $CODE for bootgly/bootgly.kit:$VERSION — that proves neither free nor taken, so this run stops instead of guessing."
+              exit 1
+              ;;
+          esac
+
+      # ! arm64 is built under emulation — Apple Silicon and ARM servers are a
+      #   large share of the users, and an amd64-only image makes them run the
+      #   whole framework through Rosetta/QEMU at runtime instead of at build.
+      - name: Set up QEMU (cross-platform build)
+        uses: docker/setup-qemu-action@v3
+
+      - name: Set up Buildx
+        uses: docker/setup-buildx-action@v4
+
+      - name: Log in to Docker Hub
+        uses: docker/login-action@v4
+        with:
+          username: ${{ secrets.DOCKER_USERNAME }}
+          password: ${{ secrets.DOCKER_PASSWORD }}
+
+      - name: Build and push the kit image
+        uses: docker/build-push-action@v7
+        with:
+          context: .
+          file: Dockerfile
+          target: kit
+          platforms: linux/amd64,linux/arm64
+          push: true
+          provenance: true
+          sbom: true
+          # ! Emulated arm64 compiles the PHP extensions; without a cache every
+          #   release pays that cost from scratch.
+          cache-from: type=gha
+          cache-to: type=gha,mode=max
+          build-args: |
+            BOOTGLY_VERSION=${{ steps.version.outputs.value }}
+            BOOTGLY_KIT_REF=${{ github.ref_type == 'tag' && github.ref_name || format('v{0}', inputs.version) }}
+            BOOTGLY_FRAMEWORK_SHA=${{ steps.source.outputs.framework_sha }}
+          tags: ${{ steps.version.outputs.tags }}

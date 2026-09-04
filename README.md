@@ -24,6 +24,28 @@ bootgly projects list
 bootgly project <Name> start
 ```
 
+## 🐳 Docker
+
+The same kit, as an image — no host setup beyond Docker:
+
+```bash
+docker run -it -v "$PWD/projects:/bootgly/projects" bootgly/bootgly.kit:<version>
+```
+
+Name a tag. `latest` is only published on a **stable** release, so while Bootgly is in
+pre-release an untagged `bootgly/bootgly.kit` does not resolve — pick a version from
+[the tag list](https://hub.docker.com/r/bootgly/bootgly.kit/tags), or the channel alias
+(`:rc`, `:beta`) of the pre-release you want.
+
+The first interactive run opens the same project wizard; any explicit command bypasses it
+(`docker run bootgly/bootgly.kit:<version> project <Name> start -f`). This repository builds and publishes
+that image on every `v*` tag — the image is a `git clone` of this kit at the tag, so one tag pins
+the framework, Console and Web together.
+
+Keep `projects/` (and `storage/`) on a volume: `docker pull` of a newer version then leaves your
+work untouched, and moving between releases inside the image means pulling another tag, not
+`kit upgrade`.
+
 ## 🗄 Database projects
 
 Projects that ship database resources — like the Web platform demos (Blog, Tasks, Auth) — prepare their database before the first start:

@@ -1,0 +1,11 @@
+# ----------------------------------------------------------------------------
+# The build takes NOTHING from the context: the image git-clones this
+# repository at its release tag (submodules included), so the context only
+# needs to be small. Ignore all of it.
+#
+# What lands in the image is decided by the clone, not by this file — including
+# the Dockerfile itself, which the security canary
+# `API/Environment/tests/1.3-docker-context-secrets` looks for to know it is
+# running inside a built image.
+# ----------------------------------------------------------------------------
+*
