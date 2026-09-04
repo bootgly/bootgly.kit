@@ -37,25 +37,48 @@ jobs:
     steps:
       # ! No submodules: the image git-clones this repository at the tag. The
       #   checkout here exists only to read which framework commit the tag pins.
+      # ! Three refs, deliberately separated — conflating them is what broke the
+      #   first dispatch of this workflow:
+      #     · the CHECKOUT provides the Dockerfile, so it must be a ref that HAS
+      #       one. On a tag push that is the tag itself; on a dispatch it is this
+      #       workflow's own ref, because a version tagged before the Dockerfile
+      #       existed carries no Dockerfile and buildx fails with
+      #       `failed to read dockerfile`.
+      #     · the SOURCE ref (`v<version>`) is what the gitlink is read from, so
+      #       the image is never stamped with a framework revision it does not
+      #       contain — the default branch can sit past the tag.
+      #     · `BOOTGLY_KIT_REF` is what the image CLONES, and is the source ref
+      #       too. The image content comes from there, never from this checkout.
+      #   `fetch-depth: 0` so the source ref is readable whichever one is out.
       - name: Checkout the kit
         uses: actions/checkout@v5
         with:
-          # ! The default branch moves past the tag; read the gitlink of the ref
-          #   this run actually builds, or the image is stamped with a framework
-          #   revision it does not contain.
-          ref: ${{ github.ref_type == 'tag' && github.ref_name || format('v{0}', inputs.version) }}
+          ref: ${{ github.ref_type == 'tag' && github.ref_name || github.ref }}
+          fetch-depth: 0
 
       - name: Resolve the pinned framework revision
         id: source
+        env:
+          SOURCE_REF: ${{ github.ref_type == 'tag' && github.ref_name || format('v{0}', inputs.version) }}
         run: |
           set -euo pipefail
-          SHA="$(git ls-tree HEAD Bootgly | awk '{print $3}')"
+          if [ -z "${SOURCE_REF:-}" ]; then
+            echo "::error::No source ref resolved (provide the 'version' input on manual dispatch)."
+            exit 1
+          fi
+          if git rev-parse --verify --quiet "refs/tags/${SOURCE_REF}" > /dev/null; then
+            :
+          else
+            echo "::error::Tag ${SOURCE_REF} does not exist in this repository — the image clones it, so it must be pushed first."
+            exit 1
+          fi
+          SHA="$(git ls-tree "refs/tags/${SOURCE_REF}" Bootgly | awk '{print $3}')"
           if [ -z "$SHA" ]; then
-            echo "::error::Could not read the Bootgly gitlink of this tag."
+            echo "::error::Could not read the Bootgly gitlink of ${SOURCE_REF}."
             exit 1
           fi
           echo "framework_sha=$SHA" >> "$GITHUB_OUTPUT"
-          echo "Framework pinned at: $SHA"
+          echo "Source ref: ${SOURCE_REF} — framework pinned at: $SHA"
 
       # ! Every untrusted value reaches the shell through `env:`, never through
       #   `${{ }}` inside `run:` — GitHub substitutes those TEXTUALLY before bash
