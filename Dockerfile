@@ -96,6 +96,17 @@ RUN set -eux; \
 # ! opcache + JIT tuning (wins over defaults via conf.d/zz-*) — it ships with
 #   the framework, so it is installed from the clone, not from a build context
 RUN cp /bootgly/Bootgly/@/__php__/zz-bootgly.ini /usr/local/etc/php/conf.d/zz-bootgly.ini
+# The runtime identity: the image runs as root (privileged ports, Auto-TLS) and the
+# servers demote their workers to this account — the scaffold names it, and a root
+# launch with no `user:` configured takes it by default.
+RUN groupadd --system bootgly && \
+    useradd --system --gid bootgly --home-dir /bootgly --shell /usr/sbin/nologin bootgly
+# A git identity, so every project the wizard creates here is born with its initial
+# commit — the same promise the traditional install keeps. Override it with `-e`.
+ENV GIT_AUTHOR_NAME="Bootgly" \
+    GIT_AUTHOR_EMAIL="kit@bootgly.com" \
+    GIT_COMMITTER_NAME="Bootgly" \
+    GIT_COMMITTER_EMAIL="kit@bootgly.com"
 
 # ! Make `bootgly` global. __DIR__ resolves the symlink → working base stays /bootgly.
 RUN ln -s /bootgly/bootgly /usr/local/bin/bootgly && \
