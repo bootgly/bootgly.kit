@@ -35,6 +35,27 @@ flags, which are intentionally left out of the user-facing docs.
   prefix if the CLI was installed globally with `php bootgly setup`; setup
   delegates only its fixed system operation through sudo when required).
 
+## Building an application — the Bootgly rules
+
+Before you write, review or answer questions about code under `projects/`, read
+the Bootgly rules `kit boot` keeps in `projects/.agents/rules/`, one file per
+section:
+
+- `projects/.agents/rules/Architecture_principles.md`
+- `projects/.agents/rules/Coding_styles.md`
+- `projects/.agents/rules/Naming_conventions.md`
+- `projects/.agents/rules/Organizational_structures.md`
+- `projects/.agents/rules/Testing_guidelines.md`
+- `projects/.agents/rules/Workflow_pipelines.md`
+
+Step-by-step recipes — the `bootgly-*` skills — live in `projects/.agents/skills/`.
+Start your agent in the kit root or in `projects/`: inside `projects/<Name>/`,
+most agents stop at the project's own repository and never see these files. If
+`projects/AGENTS.md` is missing, run `php bootgly kit boot --agents` (needed once
+after upgrading from 1.0.3 or earlier).
+
+@projects/AGENTS.md
+
 ## Non-interactive install
 
 The canonical installer accepts arguments after `--`:
@@ -258,6 +279,10 @@ Every resource dir above is gitignored by the kit — tests live PER PROJECT
   pinned submodules; changes belong upstream.
 - Do not hand-edit `projects/Bootgly.projects.php` — the registry is rewritten
   whole by `projects create/import`.
+- Do not edit `projects/AGENTS.md`, `projects/.agents/rules/` or the `bootgly-*`
+  skills — `kit boot` rewrites them. Do not create a `CLAUDE.md` in the kit root
+  or in `projects/` (nor run `/init` there): it stops Claude Code from reading
+  these `AGENTS.md` files.
 - Do not add Composer packages for framework-core concerns (HTTP server,
   autoloading, testing, config, logging): Bootgly ships them natively.
 - Do not install the framework through Composer. The kit delivers it as the
@@ -269,9 +294,9 @@ Every resource dir above is gitignored by the kit — tests live PER PROJECT
 ## Go deeper
 
 - Documentation: https://docs.bootgly.com — the Guide (features), the Manual
-  (per component) and the Testing book. Every page is also served as Markdown:
-  append `.md` to any page URL, or start from
-  https://docs.bootgly.com/llms.txt (index) and
+  (per component) and the Testing book. Every page is also served as Markdown at
+  `<page>/overview.md` (e.g. https://docs.bootgly.com/guide/database-migrations/overview.md),
+  or start from https://docs.bootgly.com/llms.txt (index) and
   https://docs.bootgly.com/llms-full.txt (the whole corpus in one file).
 - MCP: docs.bootgly.com ships an MCP server (streamable HTTP) at
   https://docs.bootgly.com/mcp — tools `search_bootgly` and `get_page_bootgly`
