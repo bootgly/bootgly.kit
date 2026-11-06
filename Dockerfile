@@ -121,10 +121,18 @@ EXPOSE 8082 443 8080 8083 9999/udp
 #   Pre-created so a fresh anonymous volume inherits the layout (Docker seeds
 #   an anonymous volume from the image, never a bind mount — there the CLI
 #   creates what it needs on first use).
+#   What the demoted workers write belongs to the runtime identity: the logs
+#   (a root-owned logs/ only costs the persisted records, with a notice) and
+#   the session key and records — an HTTP server launched as root refuses to
+#   start over a sessions/ that is not `bootgly`'s, or that its group or others
+#   can write. The storage root, pids/ and cache/ stay root's: root-run code
+#   reads what cache/ holds.
 RUN mkdir -p /bootgly/projects \
              /bootgly/storage/cache /bootgly/storage/locks /bootgly/storage/logs \
              /bootgly/storage/pids /bootgly/storage/queues /bootgly/storage/schedule \
-             /bootgly/storage/temp /bootgly/storage/tests
+             /bootgly/storage/sessions /bootgly/storage/temp /bootgly/storage/tests && \
+    chown bootgly:bootgly /bootgly/storage/logs /bootgly/storage/sessions && \
+    chmod 0700 /bootgly/storage/sessions
 VOLUME ["/bootgly/projects", "/bootgly/storage"]
 
 # ! Runs as root, deliberately: binding :80/:443 (Auto-TLS' HTTP-01 included)
