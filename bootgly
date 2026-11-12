@@ -12,7 +12,7 @@
 define('BOOTGLY_WORKING_BASE', __DIR__);
 define('BOOTGLY_WORKING_DIR', BOOTGLY_WORKING_BASE . DIRECTORY_SEPARATOR);
 
-// @ Autoboot the optional platforms (installed on demand by the project wizard):
+// @ Autoboot the platforms (git submodules, all set up by the installer):
 // Platforms are self-contained (constants + autoloader, no Bootgly dependency) and
 // must boot first — the Bootgly autoboot below routes commands that start projects
 // built on them (e.g. `project <Name> start`).
