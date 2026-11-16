@@ -43,6 +43,7 @@ section:
 
 - `projects/.agents/rules/Architecture_principles.md`
 - `projects/.agents/rules/Coding_styles.md`
+- `projects/.agents/rules/Extensibility.md`
 - `projects/.agents/rules/Naming_conventions.md`
 - `projects/.agents/rules/Organizational_structures.md`
 - `projects/.agents/rules/Testing_guidelines.md`
@@ -98,7 +99,7 @@ wizard opens. Flags:
 
 | Flag | Values | Notes |
 | --- | --- | --- |
-| `--from=` | `scratch` (default) \| `<source>` | `<source>` copies a shipped project, e.g. `Demo/HTTP_Server_CLI` (framework), `Snake` (Console), `Blog` (Web) |
+| `--from=` | `scratch` (default) \| `<source>` | `<source>` copies a shipped project, e.g. `Demo/HTTP_Server_CLI` (framework), `Demo/Snake` (Console), `Demo/Blog` (Web) |
 | `--interfaces=` | `CLI` \| `WPI` | Scratch template: CLI console app or WPI web (HTTP) server. Default `CLI` |
 | `--platform=` | `console` \| `web` \| `console,web` \| `none` | Platform submodules to initialize on first run. **A fresh kit without this flag initializes ALL platforms (network clones)** — pass `none` for a base-only setup |
 | `--port=` | int | WPI only: HTTP port written into the project file (default `8080`; the `PORT` env overrides it at runtime) |
@@ -248,7 +249,7 @@ php bootgly project <Name> seed run [name]         # run every seeder, or a sing
 - Models (ORM) are plain classes mapped by attributes — `#[Table('items')]` on
   the class, `#[Key]`/`#[Column]` on properties — conventionally in
   `projects/<Name>/Models/`. Working reference shipped with the Web platform:
-  `Web/projects/Tasks` (`Models/Task.php` + migration + seeder).
+  `Web/projects/Demo/Tasks` (`Models/Task.php` + migration + seeder).
 - `migrate sync` reconciles the migration history but asks for confirmation —
   interactive only; headless it aborts safely.
 - Guides (Markdown): https://docs.bootgly.com/guide/database-dbal/overview.md,
