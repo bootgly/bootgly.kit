@@ -9,8 +9,8 @@
 # tag is the whole scheme. Pre-releases (-beta.N, -rc.N) publish their exact
 # version plus a moving channel alias only; they never move `latest`. A stable
 # tag moves an alias only when it is the highest published stable that alias
-# covers, so a maintenance release (1.3.2 after 1.4.0) never takes `1` or
-# `latest` back.
+# covers, so a maintenance release of an older major (1.9.2 after 2.0.0)
+# never takes `latest` back.
 #
 # The benchmark harness images are NOT downstream of this one: they build FROM
 # bootgly/bootgly (the framework image), and that repository's release workflow
@@ -173,9 +173,9 @@ jobs:
             MAJOR="${V%%.*}"
             MINOR="${V%.*}"
             # ! "Published" = this repository's `vX.Y.Z` tags on origin, read
-            #   from the remote. A maintenance release (1.3.2 after 1.4.0) moves
-            #   `1.3` but neither `1` nor `latest`; a re-dispatch of an older
-            #   patch moves nothing.
+            #   from the remote. A maintenance release (1.9.2 after 2.0.0) moves
+            #   `1.9` and `1` but not `latest`; a re-dispatch of an older patch
+            #   moves nothing.
             REMOTE="$(git ls-remote --tags --refs origin)"
             PUBLISHED="$(printf '%s\n' "$REMOTE" \
               | sed -n -E "s#^[0-9a-f]+[[:space:]]+refs/tags/v($N\.$N\.$N)\$#\1#p" \
